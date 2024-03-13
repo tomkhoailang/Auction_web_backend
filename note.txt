@@ -1,0 +1,2 @@
+add quantity to product
+add status

@@ -1,0 +1,15 @@
+D:\code\ASP.NET Core\Signal R\Chat.Service\bin\Debug\net8.0\Chat.Service.deps.json
+D:\code\ASP.NET Core\Signal R\Chat.Service\bin\Debug\net8.0\Chat.Service.dll
+D:\code\ASP.NET Core\Signal R\Chat.Service\bin\Debug\net8.0\Chat.Service.pdb
+D:\code\ASP.NET Core\Signal R\Chat.Service\bin\Debug\net8.0\Chat.Data.dll
+D:\code\ASP.NET Core\Signal R\Chat.Service\bin\Debug\net8.0\Chat.Data.pdb
+D:\code\ASP.NET Core\Signal R\Chat.Service\obj\Debug\net8.0\Chat.Service.csproj.AssemblyReference.cache
+D:\code\ASP.NET Core\Signal R\Chat.Service\obj\Debug\net8.0\Chat.Service.GeneratedMSBuildEditorConfig.editorconfig
+D:\code\ASP.NET Core\Signal R\Chat.Service\obj\Debug\net8.0\Chat.Service.AssemblyInfoInputs.cache
+D:\code\ASP.NET Core\Signal R\Chat.Service\obj\Debug\net8.0\Chat.Service.AssemblyInfo.cs
+D:\code\ASP.NET Core\Signal R\Chat.Service\obj\Debug\net8.0\Chat.Service.csproj.CoreCompileInputs.cache
+D:\code\ASP.NET Core\Signal R\Chat.Service\obj\Debug\net8.0\Chat.Service.csproj.CopyComplete
+D:\code\ASP.NET Core\Signal R\Chat.Service\obj\Debug\net8.0\Chat.Service.dll
+D:\code\ASP.NET Core\Signal R\Chat.Service\obj\Debug\net8.0\refint\Chat.Service.dll
+D:\code\ASP.NET Core\Signal R\Chat.Service\obj\Debug\net8.0\Chat.Service.pdb
+D:\code\ASP.NET Core\Signal R\Chat.Service\obj\Debug\net8.0\ref\Chat.Service.dll
