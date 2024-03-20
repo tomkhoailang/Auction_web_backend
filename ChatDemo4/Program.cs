@@ -1,5 +1,6 @@
 using Chat.Data.Data;
 using Chat.Data.Models;
+using Chat.Service.Models;
 using Chat.Service.Services;
 using ChatApiDemo4.Models;
 using ChatDemo4;
@@ -14,7 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration!;
 builder.Services.AddDbContext<ApplicationDbContext>(opts => opts.UseSqlServer(configuration.GetConnectionString("ConnStr")));
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+}).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
+    o.TokenLifespan = TimeSpan.FromHours(5));
+
+
 builder.Services.AddAuthentication(opts =>
 {
     opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,7 +54,14 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
+
+var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig!);
+
+
 builder.Services.AddSingleton<IDictionary<string, UserRoomConnection>>(opt => new Dictionary<string, UserRoomConnection>());
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserManagement, UserManagement>();
 builder.Services.AddScoped<IProductManagement, ProductManagement>();
 builder.Services.AddScoped<IChatRoomManagement, ChatRoomManagement>();
@@ -58,12 +72,15 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("http://localhost:4200", "http://10.0.2.2:5554")
+        builder.WithOrigins("http://localhost:4200")
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowCredentials()
+            .WithExposedHeaders("Set-Cookie");
     });
 });
+
+
 
 var app = builder.Build();
 
