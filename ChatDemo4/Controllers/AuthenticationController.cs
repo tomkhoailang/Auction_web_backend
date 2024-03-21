@@ -61,7 +61,7 @@ namespace ChatApiDemo4.Controllers
             return StatusCode(getOtpLogin.StatusCode, new { getOtpLogin.Response });
 
         }
-        [HttpPost("forgot-password/verify")]
+        [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromQuery] string token, [FromQuery] string email, [FromBody] ResetPasswordModel resetPasswordModel)
         {
             resetPasswordModel.Email = email;

@@ -250,7 +250,7 @@ namespace Chat.Service.Services
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             if (!string.IsNullOrEmpty(token))
             {
-                var content = $"http://localhost:5274/api/authentication/forgot-password/verify?token={token}&email={user.Email}";
+                var content = $"http://localhost:4200/reset-password?token={token}&email={user.Email}";
                 var message = new MessageEmail(new string[] { user.Email! }, "Reset password: ", content);
                 _emailService.sendEmail(message);
                 return new ApiResponse<string> { IsSuccess = true, StatusCode = 200, Message = $"We have sent a reset password link to your Email {user.Email}" };
