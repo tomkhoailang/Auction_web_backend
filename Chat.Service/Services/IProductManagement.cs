@@ -10,12 +10,15 @@ namespace Chat.Service.Services
         public Task<ApiResponse<Product>> AssignToChatRoomAsync(List<Product> products, ChatRoom chatRoom);
         public Task<ApiResponse<Product>> GetProductAsync(int ProductId);
         public Task<ApiResponse<List<Product>>> GetMultipleProductsAsync(List<int> productIds);
+        public Task<ApiResponse<List<Product>>> GetProductFromUserAsync(string UserId);
+        public Task<ApiResponse<List<ProductStatus>>> GetListProductStatus();
         public Task<ApiResponse<List<Product>>> GetProductListFromChatRoomAsync(int ChatRoomId);
         public Task<ApiResponse<Product>> GetCurrentBiddingProductFromChatRoomAsync(int ChatRoomId);
         public Task<ApiResponse<Bidding>> CreateBiddingAsync(CreateBiddingModel createBiddingModel);
         public Task<ApiResponse<bool>> IsValidBidding(decimal biddingAmount, Product product);
-
-
-
+        public Task<ApiResponse<Message>> DeleteProductAsync(int ProductId);
+        public Task<ApiResponse<Product>> EditProductAsync(CreateProductModel createProductModel, int productId, string UserId);
+        public Task<ApiResponse<List<Product>>> GetProductsWithStatus(int statusId);
+        public Task<ApiResponse<Product>> ContinueBidding(int ProductId);
     }
 }

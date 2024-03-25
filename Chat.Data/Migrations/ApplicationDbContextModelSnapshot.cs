@@ -125,7 +125,7 @@ namespace Chat.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Biddings", (string)null);
+                    b.ToTable("Biddings");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.ChatRoom", b =>
@@ -150,7 +150,7 @@ namespace Chat.Data.Migrations
 
                     b.HasIndex("HostUserId");
 
-                    b.ToTable("ChatRooms", (string)null);
+                    b.ToTable("ChatRooms");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.ChatRoomProduct", b =>
@@ -179,7 +179,7 @@ namespace Chat.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ChatRoomProducts", (string)null);
+                    b.ToTable("ChatRoomProducts");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.Message", b =>
@@ -210,7 +210,7 @@ namespace Chat.Data.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages", (string)null);
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.Product", b =>
@@ -246,7 +246,7 @@ namespace Chat.Data.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.ProductImage", b =>
@@ -268,7 +268,7 @@ namespace Chat.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.ProductInStatus", b =>
@@ -296,7 +296,7 @@ namespace Chat.Data.Migrations
 
                     b.HasIndex("ProductStatusId");
 
-                    b.ToTable("ProductInStatus", (string)null);
+                    b.ToTable("ProductInStatus");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.ProductStatus", b =>
@@ -313,7 +313,7 @@ namespace Chat.Data.Migrations
 
                     b.HasKey("ProductStatusId");
 
-                    b.ToTable("ProductStatuses", (string)null);
+                    b.ToTable("ProductStatuses");
 
                     b.HasData(
                         new
@@ -355,7 +355,7 @@ namespace Chat.Data.Migrations
 
                     b.HasIndex("ChatRoomId");
 
-                    b.ToTable("ChatRoomUser", (string)null);
+                    b.ToTable("ChatRoomUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -387,14 +387,14 @@ namespace Chat.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "69c2abb4-3227-4fcb-a63b-14b4f505e02f",
+                            Id = "86ed554a-66e3-49c3-a024-1461eea1b465",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "c06f4997-08ee-486c-b2fc-fda7923b33b5",
+                            Id = "58e3e1ef-075a-41d9-b97d-05ec422bd4ef",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -602,7 +602,7 @@ namespace Chat.Data.Migrations
                     b.HasOne("Chat.Data.Models.Product", "Product")
                         .WithMany("ProductInStatuses")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Chat.Data.Models.ProductStatus", "ProductStatus")

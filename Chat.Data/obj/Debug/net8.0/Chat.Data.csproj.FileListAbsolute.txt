@@ -10,3 +10,16 @@ D:\code\ASP.NET Core\Signal R\Chat.Data\obj\Debug\net8.0\Chat.Data.dll
 D:\code\ASP.NET Core\Signal R\Chat.Data\obj\Debug\net8.0\refint\Chat.Data.dll
 D:\code\ASP.NET Core\Signal R\Chat.Data\obj\Debug\net8.0\Chat.Data.pdb
 D:\code\ASP.NET Core\Signal R\Chat.Data\obj\Debug\net8.0\ref\Chat.Data.dll
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\bin\Debug\net8.0\Chat.Data.deps.json
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\bin\Debug\net8.0\Chat.Data.dll
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\bin\Debug\net8.0\Chat.Data.pdb
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\obj\Debug\net8.0\Chat.Data.csproj.AssemblyReference.cache
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\obj\Debug\net8.0\Chat.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\obj\Debug\net8.0\Chat.Data.AssemblyInfoInputs.cache
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\obj\Debug\net8.0\Chat.Data.AssemblyInfo.cs
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\obj\Debug\net8.0\Chat.Data.csproj.CoreCompileInputs.cache
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\obj\Debug\net8.0\Chat.Data.sourcelink.json
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\obj\Debug\net8.0\Chat.Data.dll
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\obj\Debug\net8.0\refint\Chat.Data.dll
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\obj\Debug\net8.0\Chat.Data.pdb
+C:\Users\ADMIN\OneDrive\Máy tính\code\source code\api\bidding_web\Auction_web_backend\Chat.Data\obj\Debug\net8.0\ref\Chat.Data.dll

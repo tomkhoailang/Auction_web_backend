@@ -11,7 +11,7 @@ namespace Chat.Data.Configs
             builder.HasKey(pis => pis.ProductInStatusID);
             builder.Property(pis => pis.ProductInStatusID).ValueGeneratedOnAdd();
             builder.Property(pis => pis.Timestamp).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            builder.HasOne(pis => pis.Product).WithMany(p => p.ProductInStatuses).HasForeignKey(pis => pis.ProductId).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(pis => pis.Product).WithMany(p => p.ProductInStatuses).HasForeignKey(pis => pis.ProductId).OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(pis => pis.ProductStatus).WithMany(p => p.ProductInStatuses).HasForeignKey(pis => pis.ProductStatusId).OnDelete(DeleteBehavior.NoAction);
 
 

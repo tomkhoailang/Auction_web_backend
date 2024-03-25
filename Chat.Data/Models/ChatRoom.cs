@@ -11,6 +11,5 @@
         public virtual ICollection<ApplicationUser>? Users { get; set; }
         public virtual ICollection<ChatRoomProduct>? ChatRoomProducts { get; set; }
 
-
     }
 }
