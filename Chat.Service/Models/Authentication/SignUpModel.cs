@@ -6,7 +6,7 @@ namespace Chat.Service.Models.Authentication
     {
         [Required(ErrorMessage = "Must have an email")]
         public string? Email { get; set; }
-        [Required(ErrorMessage = "Must have an user")]
+        [Required(ErrorMessage = "Must have an username")]
 
         public string? UserName { get; set; }
         [Required(ErrorMessage = "Must have a password")]
