@@ -4,6 +4,7 @@ using Chat.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chat.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240313132851_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -387,14 +390,14 @@ namespace Chat.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "86ed554a-66e3-49c3-a024-1461eea1b465",
+                            Id = "876c7c74-92c3-4b74-a1e4-362d35687c15",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "58e3e1ef-075a-41d9-b97d-05ec422bd4ef",
+                            Id = "2a39d34e-0e1a-4e13-9dc2-390f59b3553b",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -602,7 +605,7 @@ namespace Chat.Data.Migrations
                     b.HasOne("Chat.Data.Models.Product", "Product")
                         .WithMany("ProductInStatuses")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Chat.Data.Models.ProductStatus", "ProductStatus")

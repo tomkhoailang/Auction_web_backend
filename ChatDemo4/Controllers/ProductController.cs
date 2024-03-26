@@ -36,6 +36,8 @@ namespace ChatApiDemo4.Controllers
             var createProductRes = await _productManager.CreateProductAsync(createProductModel, userInfoRes.Response!.Id);
             return StatusCode(201, new { createProductRes.Message });
         }
+
+
         [Authorize]
         [HttpPost("{productId}/biddings")]
         public async Task<IActionResult> createBidding(int productId, [FromBody] CreateBiddingModel createBiddingModel)
@@ -56,5 +58,91 @@ namespace ChatApiDemo4.Controllers
             var createBidding = await _productManager.CreateBiddingAsync(createBiddingModel);
             return StatusCode(createBidding.StatusCode, new { createBidding.Message });
         }
+
+        [Authorize]
+        [HttpGet("statuses")]
+        public async Task<IActionResult> GetStatusList()
+        {
+            var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
+
+            var listStatus = await _productManager.GetListProductStatus();
+            if (!listStatus.IsSuccess)
+            {
+                return StatusCode(listStatus.StatusCode, new { listStatus.Message });
+            }
+            return StatusCode(listStatus.StatusCode, new { listStatus.Response });
+        }
+
+        [Authorize]
+        [HttpDelete("{productId}/delete")]
+        public async Task<IActionResult> DeleteProduct(int productId)
+        {
+            var product = await _productManager.DeleteProductAsync(productId);
+            if (!product.IsSuccess)
+            {
+                return StatusCode(product.StatusCode, new { product.Message });
+            }
+            return StatusCode(product.StatusCode, new { product.Message });
+        }
+
+        [Authorize]
+        [HttpPost("{productId}/edit")]
+        public async Task<IActionResult> EditProduct(IFormCollection createProductForm, int productId)
+        {
+            var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
+
+            var createProductModel = new CreateProductModel();
+            createProductModel.Name = createProductForm["Name"]!;
+            createProductModel.Description = createProductForm["Description"]!;
+            createProductModel.InitialPrice = decimal.Parse(createProductForm["InitialPrice"]!);
+            createProductModel.MinimumStep = decimal.Parse(createProductForm["MinimumStep"]!);
+            createProductModel.Files = createProductForm.Files;
+
+            var createProductRes = await _productManager.EditProductAsync(createProductModel, productId, userInfoRes.Response!.Id);
+            return StatusCode(201, new { createProductRes.Message });
+        }
+
+        [Authorize]
+        [HttpPost("new/{productId}")]
+        public async Task<IActionResult> ContinueBidding(int productId)
+        {
+            var createProductRes = await _productManager.ContinueBidding(productId);
+            return StatusCode(201, new { createProductRes.Message });
+        }
+
+
+        [HttpGet("status/{statusId}")]
+        public async Task<IActionResult> getProductsWithStatus(int statusId)
+        {
+            var listProduct = await _productManager.GetProductsWithStatus(statusId);
+            if (!listProduct.IsSuccess)
+            {
+                return StatusCode(listProduct.StatusCode, new { listProduct.Message });
+            }
+            return StatusCode(listProduct.StatusCode, new { listProduct.Response });
+        }
+
+        [HttpGet("{chatRoomId}/get")]
+        public async Task<IActionResult> getProductsFromChatRoom(int chatRoomId)
+        {
+            var listProduct = await _productManager.GetProductListFromChatRoomAsync(chatRoomId);
+            if (!listProduct.IsSuccess)
+            {
+                return StatusCode(listProduct.StatusCode, new { listProduct.Message });
+            }
+            return StatusCode(listProduct.StatusCode, new { listProduct.Response });
+        }
+
+        [HttpGet("{productId}")]
+        public async Task<IActionResult> getProduct(int productId)
+        {
+            var product = await _productManager.GetProductAsync(productId);
+            if (!product.IsSuccess)
+            {
+                return StatusCode(product.StatusCode, new { product.Message });
+            }
+            return StatusCode(product.StatusCode, new { product.Response });
+        }
+
     }
 }

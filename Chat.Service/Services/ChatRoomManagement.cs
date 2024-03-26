@@ -3,6 +3,7 @@ using Chat.Data.Models;
 using Chat.Service.Models;
 using Chat.Service.Models.ChatRoom;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Chat.Service.Services
 {
@@ -30,7 +31,7 @@ namespace Chat.Service.Services
             {
                 HostUserId = createChatRoomModel.HostUserId,
                 StartDate = createChatRoomModel.StartDate,
-                EndDate = createChatRoomModel.EndDate,
+                EndDate = createChatRoomModel.StartDate.AddMinutes(5),
             };
             await _dbcontext.ChatRooms.AddAsync(chatRoom);
             var rs = await _dbcontext.SaveChangesAsync();
@@ -73,6 +74,94 @@ namespace Chat.Service.Services
                 return new ApiResponse<Message> { IsSuccess = true, Message = "Create message sucessully", StatusCode = 201, Response = message };
             }
             return new ApiResponse<Message> { IsSuccess = false, Message = "Create message failed", StatusCode = 400 };
+        }
+
+        public async Task<ApiResponse<List<ChatRoom>>> GetAllChatRooms()
+        {
+            var chatroomList = await _dbcontext.ChatRooms.Include(p => p.Users).Include(p => p.ChatRoomProducts).ThenInclude(p => p.Product).ThenInclude(p => p.ProductInStatuses).OrderByDescending(p => p.ChatRoomId).ToListAsync();
+            if (chatroomList == null)
+            {
+                return new ApiResponse<List<ChatRoom>> { IsSuccess = false, Message = "No chatroom found with that id", StatusCode = 404 };
+            }
+            return new ApiResponse<List<ChatRoom>> { IsSuccess = true, Message = "Chat room is found", StatusCode = 200, Response = chatroomList };
+        }
+
+        public async Task<ApiResponse<Message>> DeleteChatRoomAsync(int ChatRoomId)
+        {
+
+            var chatRoom = await _dbcontext.ChatRooms.Include(p => p.ChatRoomProducts).Include(p => p.Users).FirstOrDefaultAsync(p => p.ChatRoomId == ChatRoomId);
+            List<int> products = new List<int>();
+            foreach (var product in chatRoom.ChatRoomProducts)
+            {
+                products.Add(product.ProductId);
+            }
+            foreach (var id in products)
+            {
+                var product = await _dbcontext.Products.Include(p => p.ProductInStatuses).FirstOrDefaultAsync(p => p.ProductId == id);
+                product.ProductInStatuses.Add(new ProductInStatus { ProductStatusId = 1 });
+            }
+            var chatRoomProduct = chatRoom.ChatRoomProducts;
+            _dbcontext.ChatRoomProducts.RemoveRange(chatRoomProduct);
+            chatRoom.Users = null;
+            _dbcontext.ChatRooms.Remove(chatRoom);
+            var rs = await _dbcontext.SaveChangesAsync();
+            if (rs > 0)
+            {
+                return new ApiResponse<Message> { IsSuccess = true, Message = "Create message sucessully", StatusCode = 201, Response = new Message() };
+            }
+            return new ApiResponse<Message> { IsSuccess = false, Message = "Create message failed", StatusCode = 400 };
+        }
+
+        public async Task<ApiResponse<ChatRoom>> EditChatRoomAsync(CreateChatRoomModel createChatRoomModel, int chatRoomId)
+        {
+            //ChatRoom chatRoom = new ChatRoom
+            //{
+            //    HostUserId = createChatRoomModel.HostUserId,
+            //    StartDate = createChatRoomModel.StartDate,
+            //    EndDate = createChatRoomModel.StartDate.AddMinutes(5),
+            //};
+            var chatRoom = await _dbcontext.ChatRooms.Include(p => p.ChatRoomProducts).Include(p => p.Users).FirstOrDefaultAsync(p => p.ChatRoomId == chatRoomId);
+            //Edit Products
+            List<int> products = new List<int>();
+            foreach (var product in chatRoom.ChatRoomProducts)
+            {
+                products.Add(product.ProductId);
+            }
+            foreach (var id in products)
+            {
+                var product = await _dbcontext.Products.Include(p => p.ProductInStatuses).FirstOrDefaultAsync(p => p.ProductId == id);
+                product.ProductInStatuses.Add(new ProductInStatus { ProductStatusId = 1 });
+            }
+            var chatRoomProduct = chatRoom.ChatRoomProducts;
+            _dbcontext.ChatRoomProducts.RemoveRange(chatRoomProduct);
+
+            chatRoom.Users = null;
+            chatRoom.StartDate = createChatRoomModel.StartDate;
+            chatRoom.EndDate = createChatRoomModel.StartDate.AddMinutes(5);
+            
+            var rs = await _dbcontext.SaveChangesAsync();
+            if (rs > 0)
+            {
+                return new ApiResponse<ChatRoom> { IsSuccess = true, Message = "Create chat room sucessully", StatusCode = 201, Response = chatRoom };
+            }
+            return new ApiResponse<ChatRoom> { IsSuccess = false, Message = "Create chat room failed", StatusCode = 400 };
+        }
+
+        public async Task<ApiResponse<ChatRoom>> JoinChatRoom(int ChatRoomId, string UserId)
+        {
+            var chatRoom = await _dbcontext.ChatRooms.Include(c => c.Users).FirstOrDefaultAsync(c => c.ChatRoomId ==  ChatRoomId);
+            var user = await _dbcontext.ApplicationUsers.Include(c => c.JoinedChatRooms).FirstOrDefaultAsync(c => c.Id == UserId);
+
+            if (!chatRoom.Users.Contains(user))
+            {
+                chatRoom.Users.Add(user);
+            }
+            var rs = await _dbcontext.SaveChangesAsync();
+            if (rs > 0)
+            {
+                return new ApiResponse<ChatRoom> { IsSuccess = true, Message = "Join chat room sucessully", StatusCode = 201, Response = chatRoom };
+            }
+            return new ApiResponse<ChatRoom> { IsSuccess = false, Message = "Join chat room failed", StatusCode = 400 };
         }
     }
 }

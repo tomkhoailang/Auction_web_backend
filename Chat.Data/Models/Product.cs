@@ -16,6 +16,5 @@
         public virtual ICollection<ChatRoomProduct>? ChatRoomProducts { get; set; }
 
 
-
     }
 }

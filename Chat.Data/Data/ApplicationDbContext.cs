@@ -15,8 +15,8 @@ namespace Chat.Data.Data
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductStatus> ProductStatuses { get; set; }
         public DbSet<ChatRoomProduct> ChatRoomProducts { get; set; }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
 
 
