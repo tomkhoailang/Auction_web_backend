@@ -1,4 +1,5 @@
-﻿using Chat.Data.Data;
+﻿using AutoMapper;
+using Chat.Data.Data;
 using Chat.Data.Models;
 using Chat.Service.Models;
 using Chat.Service.Models.Product;
@@ -9,11 +10,14 @@ namespace Chat.Service.Services
     public class ProductManagement : IProductManagement
     {
         private readonly ApplicationDbContext _dbcontext;
+        private readonly IMapper _mapper;
 
-        public ProductManagement(ApplicationDbContext dbcontext)
+        public ProductManagement(ApplicationDbContext dbcontext, IMapper mapper)
         {
             _dbcontext = dbcontext;
+            _mapper = mapper;
         }
+
         public async Task<ApiResponse<Product>> GetProductAsync(int ProductId)
         {
             Product product = await _dbcontext.Products.Include(p => p.Biddings).Include(p => p.Images).Include(p => p.ProductInStatuses).ThenInclude(p => p.ProductStatus).FirstOrDefaultAsync(p => p.ProductId == ProductId);
@@ -23,6 +27,7 @@ namespace Chat.Service.Services
             }
             return new ApiResponse<Product> { IsSuccess = true, Message = "product is found", StatusCode = 200, Response = product };
         }
+
         public async Task<ApiResponse<List<Product>>> GetMultipleProductsAsync(List<int> productIds)
         {
             var products = await _dbcontext.Products.Where(p => productIds.Contains(p.ProductId)).Include(p => p.ProductInStatuses).Include(p => p.Seller).ToListAsync();
@@ -53,7 +58,7 @@ namespace Chat.Service.Services
                     {
                         ProductId = product.ProductId,
                         BiddingStartTime = currentTime,
-                        BiddingEndTime = currentTime.AddMinutes(30),  
+                        BiddingEndTime = currentTime.AddMinutes(30),
                     };
                     chatRoom.ChatRoomProducts.Add(chatRoomProduct);
                     product.ProductInStatuses?.Add(new ProductInStatus { ProductStatusId = 2 });
@@ -91,9 +96,13 @@ namespace Chat.Service.Services
                     //change this path to the one in assets/productImages in angular project
                     //var path = Path.Combine("C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api/bidding_web\\Auction_web_backend\\Chat.Service\\Images\\ProductImages", fileName);
 
-                    var path = Path.Combine("C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web\\src\\productImages", fileName);
+                    //var path = Path.Combine("C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web\\src\\productImages", fileName);
 
-                    using (var stream = File.Create(path))
+                    //var path = Path.Combine("D:\\code\\ASP.NET Core\\Signal R\\Auction_web_backend\\Chat.Service\\Images\\ProductImages\\", fileName);
+                    var rDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+                    var imagePath = Path.Combine(rDirectory, "Chat.Service", "Images", "ProductImages", fileName);
+
+                    using (var stream = File.Create(imagePath))
                     {
                         await file.CopyToAsync(stream);
                     }
@@ -212,10 +221,10 @@ namespace Chat.Service.Services
             //{
             //    _dbcontext.ProductImages.Remove(image);
             //}
-            
-            _dbcontext.Products.Remove(product);    
+
+            _dbcontext.Products.Remove(product);
             var rs = await _dbcontext.SaveChangesAsync();
-            if(rs > 0)
+            if (rs > 0)
             {
                 return new ApiResponse<Message> { IsSuccess = true, Message = "Bidding successfully", StatusCode = 201 };
             }
@@ -233,9 +242,13 @@ namespace Chat.Service.Services
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     //change this path to the one in assets/productImages in angular project
                     //var path = Path.Combine("C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api/bidding_web\\Auction_web_backend\\Chat.Service\\Images\\ProductImages", fileName);
-                    var path = Path.Combine("C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web\\src\\productImages", fileName);
+                    //var path = Path.Combine("C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web\\src\\productImages", fileName);
 
-                    using (var stream = File.Create(path))
+                    //var path = Path.Combine("D:\\code\\ASP.NET Core\\Signal R\\Auction_web_backend\\Chat.Service\\Images\\ProductImages\\", fileName);
+                    var rDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+                    var imagePath = Path.Combine(rDirectory, "Chat.Service", "Images", "ProductImages", fileName);
+
+                    using (var stream = File.Create(imagePath))
                     {
                         await file.CopyToAsync(stream);
                     }
@@ -303,6 +316,7 @@ namespace Chat.Service.Services
             }
             return new ApiResponse<List<Product>> { IsSuccess = true, Message = "Find product by current time successfully", Response = productsWithLatestStatus, StatusCode = 200 };
         }
+
 
     }
 }

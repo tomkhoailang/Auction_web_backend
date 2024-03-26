@@ -3,6 +3,7 @@ using Chat.Service.Models.Product;
 using Chat.Service.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace ChatApiDemo4.Controllers
 {
@@ -18,10 +19,11 @@ namespace ChatApiDemo4.Controllers
         {
             _productManager = productManager;
             _userManager = userManager;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         }
 
         [Authorize]
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateProduct(IFormCollection createProductForm)
         {
             var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
@@ -74,7 +76,7 @@ namespace ChatApiDemo4.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{productId}/delete")]
+        [HttpDelete("{productId}")]
         public async Task<IActionResult> DeleteProduct(int productId)
         {
             var product = await _productManager.DeleteProductAsync(productId);
@@ -85,8 +87,24 @@ namespace ChatApiDemo4.Controllers
             return StatusCode(product.StatusCode, new { product.Message });
         }
 
+        //[Authorize]
+        //[HttpPost("{productId}/edit")]
+        //public async Task<IActionResult> EditProduct(IFormCollection createProductForm, int productId)
+        //{
+        //    var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
+
+        //    var createProductModel = new CreateProductModel();
+        //    createProductModel.Name = createProductForm["Name"]!;
+        //    createProductModel.Description = createProductForm["Description"]!;
+        //    createProductModel.InitialPrice = decimal.Parse(createProductForm["InitialPrice"]!);
+        //    createProductModel.MinimumStep = decimal.Parse(createProductForm["MinimumStep"]!);
+        //    createProductModel.Files = createProductForm.Files;
+
+        //    var createProductRes = await _productManager.EditProductAsync(createProductModel, productId, userInfoRes.Response!.Id);
+        //    return StatusCode(201, new { createProductRes.Message });
+        //}
         [Authorize]
-        [HttpPost("{productId}/edit")]
+        [HttpPatch("{productId}")]
         public async Task<IActionResult> EditProduct(IFormCollection createProductForm, int productId)
         {
             var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
@@ -94,8 +112,9 @@ namespace ChatApiDemo4.Controllers
             var createProductModel = new CreateProductModel();
             createProductModel.Name = createProductForm["Name"]!;
             createProductModel.Description = createProductForm["Description"]!;
-            createProductModel.InitialPrice = decimal.Parse(createProductForm["InitialPrice"]!);
-            createProductModel.MinimumStep = decimal.Parse(createProductForm["MinimumStep"]!);
+
+            createProductModel.InitialPrice = Convert.ToDecimal(createProductForm["InitialPrice"]);
+            createProductModel.MinimumStep = Convert.ToDecimal(createProductForm["MinimumStep"]);
             createProductModel.Files = createProductForm.Files;
 
             var createProductRes = await _productManager.EditProductAsync(createProductModel, productId, userInfoRes.Response!.Id);
@@ -103,7 +122,7 @@ namespace ChatApiDemo4.Controllers
         }
 
         [Authorize]
-        [HttpPost("new/{productId}")]
+        [HttpPost("{productId}/productStatuses")]
         public async Task<IActionResult> ContinueBidding(int productId)
         {
             var createProductRes = await _productManager.ContinueBidding(productId);
@@ -143,6 +162,21 @@ namespace ChatApiDemo4.Controllers
             }
             return StatusCode(product.StatusCode, new { product.Response });
         }
+        [HttpGet("images")]
+        public async Task<IActionResult> getImages([FromQuery] string imgName)
+        {
+            var rDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+            var imagePath = Path.Combine(rDirectory, "Chat.Service", "Images", "ProductImages", imgName);
+
+            if (!System.IO.File.Exists(imagePath))
+            {
+                return NotFound();
+            }
+
+            var fileStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, "image/jpeg");
+        }
+
 
     }
 }

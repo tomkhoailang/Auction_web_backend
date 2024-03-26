@@ -302,3 +302,5 @@ D:\code\ASP.NET Core\Signal R\Auction_web_backend\ChatDemo4\bin\Debug\net8.0\Mai
 D:\code\ASP.NET Core\Signal R\Auction_web_backend\ChatDemo4\bin\Debug\net8.0\MimeKit.dll
 D:\code\ASP.NET Core\Signal R\Auction_web_backend\ChatDemo4\bin\Debug\net8.0\NETCore.MailKit.dll
 D:\code\ASP.NET Core\Signal R\Auction_web_backend\ChatDemo4\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+D:\code\ASP.NET Core\Signal R\Auction_web_backend\ChatDemo4\bin\Debug\net8.0\AutoMapper.dll
+D:\code\ASP.NET Core\Signal R\Auction_web_backend\ChatDemo4\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

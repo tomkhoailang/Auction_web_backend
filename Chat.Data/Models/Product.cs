@@ -14,7 +14,5 @@
         public virtual ICollection<Bidding>? Biddings { get; set; }
         public virtual ICollection<ProductInStatus>? ProductInStatuses { get; set; }
         public virtual ICollection<ChatRoomProduct>? ChatRoomProducts { get; set; }
-
-
     }
 }

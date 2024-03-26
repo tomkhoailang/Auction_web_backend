@@ -1,5 +1,4 @@
-﻿using Chat.Data.Models;
-using Chat.Service.Models;
+﻿using Chat.Service.Models;
 using Chat.Service.Models.ChatRoom;
 using Chat.Service.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -110,8 +109,6 @@ namespace ChatApiDemo4.Controllers
         [HttpDelete("{chatroomId}")]
         public async Task<IActionResult> DeleteChatRoom(int chatroomId)
         {
-
-
             var getChatRoomRs = await _chatRoomManager.DeleteChatRoomAsync(chatroomId);
             if (!getChatRoomRs.IsSuccess)
             {
@@ -122,10 +119,10 @@ namespace ChatApiDemo4.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("{chatRoomId}/edit")]
+        [HttpPatch("{chatRoomId}")]
         public async Task<IActionResult> EditChatRoom([FromBody] CreateChatRoomModel createChatRoomModel, int chatRoomId)
         {
-            
+
             TimeZoneInfo indochinaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
 
             // Convert startDate to GMT+7

@@ -29,9 +29,9 @@ namespace ChatApiDemo4.Controllers
         [HttpGet("products")]
         public async Task<IActionResult> getProductListFromUser()
         {
-            //var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
+            var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
 
-            var listProduct = await _productManager.GetProductFromUserAsync("a3a57a6f-c8d3-46f8-adb2-ea3361dd719a");
+            var listProduct = await _productManager.GetProductFromUserAsync(userInfoRes.Response!.Id);
             if (!listProduct.IsSuccess)
             {
                 return StatusCode(listProduct.StatusCode, new { listProduct.Message });
