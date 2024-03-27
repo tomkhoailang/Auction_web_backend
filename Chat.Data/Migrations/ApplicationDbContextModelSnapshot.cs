@@ -387,14 +387,14 @@ namespace Chat.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "86ed554a-66e3-49c3-a024-1461eea1b465",
+                            Id = "ba67ca5f-1f32-4c5b-8a73-07c476fe729e",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "58e3e1ef-075a-41d9-b97d-05ec422bd4ef",
+                            Id = "4d3cf7bb-8335-4691-bc83-63a421b14324",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -548,7 +548,7 @@ namespace Chat.Data.Migrations
                     b.HasOne("Chat.Data.Models.Product", "Product")
                         .WithMany("ChatRoomProducts")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ChatRoom");

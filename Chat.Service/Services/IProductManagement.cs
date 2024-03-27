@@ -22,5 +22,6 @@ namespace Chat.Service.Services
         public Task<ApiResponse<Product>> EditProductAsync(CreateProductModel createProductModel, int productId, string UserId);
         public Task<ApiResponse<List<Product>>> GetProductsWithStatus(int statusId);
         public Task<ApiResponse<Product>> ContinueBidding(int ProductId);
+        public Task<ApiResponse<List<string>>> GetImageNames(int ProductId);
     }
 }
