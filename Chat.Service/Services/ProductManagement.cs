@@ -4,6 +4,7 @@ using Chat.Data.Models;
 using Chat.Service.Models;
 using Chat.Service.Models.Product;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Chat.Service.Services
 {
@@ -189,7 +190,30 @@ namespace Chat.Service.Services
 
         public async Task<ApiResponse<List<Product>>> GetProductFromUserAsync(string UserId)
         {
-            var products = await _dbcontext.Products.Include(p => p.Images).Include(p => p.ChatRoomProducts).Include(p => p.ProductInStatuses).ThenInclude(p => p.ProductStatus).Include(p => p.Biddings).Where(p => p.SellerId == UserId).ToListAsync();
+            //var products = await _dbcontext.Products.Include(p => p.Images).Include(p => p.ChatRoomProducts).Include(p => p.ProductInStatuses).Include(p => p.Biddings).Where(p => p.SellerId == UserId).ToListAsync();
+
+            var products = await _dbcontext.Products
+            .Include(p => p.Images)
+            .Include(p => p.ChatRoomProducts)
+            .Include(p => p.ProductInStatuses)
+            .Include(p => p.Biddings)
+            .Where(p => p.SellerId == UserId)
+            .Select(p => new Product
+            {
+                ProductId = p.ProductId,
+                Name = p.Name,
+                Description = p.Description,
+                InitialPrice = p.InitialPrice,
+                MinimumStep = p.MinimumStep,
+                IsSold = p.IsSold,
+                SellerId = p.SellerId,
+                Images = p.Images,
+                Biddings = p.Biddings,
+                ProductInStatuses = p.ProductInStatuses,
+                ChatRoomProducts = p.ChatRoomProducts
+            })
+            .ToListAsync();
+
             var a = products[0];
             if (products == null)
             {
@@ -211,7 +235,7 @@ namespace Chat.Service.Services
 
         public async Task<ApiResponse<Message>> DeleteProductAsync(int ProductId)
         {
-            var product = await _dbcontext.Products.Include(p => p.Images).Include(p => p.ProductInStatuses).FirstOrDefaultAsync(p => p.ProductId == ProductId);
+            var product = await _dbcontext.Products.Include(p => p.Images).Include(p => p.ProductInStatuses).Include(p => p.ChatRoomProducts).FirstOrDefaultAsync(p => p.ProductId == ProductId);
             if (product == null)
             {
                 return new ApiResponse<Message> { IsSuccess = false, Message = "Error", StatusCode = 404 };
@@ -221,7 +245,7 @@ namespace Chat.Service.Services
             //{
             //    _dbcontext.ProductImages.Remove(image);
             //}
-
+            product.ChatRoomProducts = null;
             _dbcontext.Products.Remove(product);
             var rs = await _dbcontext.SaveChangesAsync();
             if (rs > 0)
@@ -317,6 +341,24 @@ namespace Chat.Service.Services
             return new ApiResponse<List<Product>> { IsSuccess = true, Message = "Find product by current time successfully", Response = productsWithLatestStatus, StatusCode = 200 };
         }
 
+        public async Task<ApiResponse<List<string>>> GetImageNames(int ProductId)
+        {
+            var products = await _dbcontext.ProductImages
+                .Where(p => p.ProductId == ProductId)
+                .ToListAsync();
+            List<string> imgNames = new List<string>();
+
+            foreach (var product in products)
+            {
+                imgNames.Add(product.Image);
+            }
+
+            if (imgNames == null)
+            {
+                return new ApiResponse<List<string>> { IsSuccess = false, Message = "No image with that product id", StatusCode = 404 };
+            }
+            return new ApiResponse<List<string>> { IsSuccess = true, Message = "Find images by productid successfully", Response = imgNames, StatusCode = 200 };
+        }
 
     }
 }

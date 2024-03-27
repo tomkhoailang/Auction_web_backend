@@ -177,6 +177,18 @@ namespace ChatApiDemo4.Controllers
             return File(fileStream, "image/jpeg");
         }
 
+        [HttpGet("user")]
+        public async Task<IActionResult> getProductListFromUser()
+        {
+            var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
+
+            var listProduct = await _productManager.GetProductFromUserAsync(userInfoRes.Response!.Id);
+            if (!listProduct.IsSuccess)
+            {
+                return StatusCode(listProduct.StatusCode, new { listProduct.Message });
+            }
+            return StatusCode(listProduct.StatusCode, new { listProduct.Response });
+        }
 
     }
 }
