@@ -14,13 +14,11 @@ namespace Chat.Data.Data
         public DbSet<Bidding> Biddings { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductStatus> ProductStatuses { get; set; }
+        public DbSet<ProductInStatus> ProductInStatuses { get; set; }
         public DbSet<ChatRoomProduct> ChatRoomProducts { get; set; }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-
-
-
-
+        public DbSet<ChatRoomUser> ChatRoomUsers { get; set; }
 
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -29,6 +27,19 @@ namespace Chat.Data.Data
         {
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            var entityTypes = builder.Model.GetEntityTypes();
+
+            builder.Entity<Bidding>().HasQueryFilter(x => x.IsDeleted == false);
+            builder.Entity<ChatRoom>().HasQueryFilter(x => x.IsDeleted == false);
+            builder.Entity<ChatRoomProduct>().HasQueryFilter(x => x.IsDeleted == false);
+            builder.Entity<ChatRoomUser>().HasQueryFilter(x => x.IsDeleted == false);
+            builder.Entity<Message>().HasQueryFilter(x => x.IsDeleted == false);
+            builder.Entity<Product>().HasQueryFilter(x => x.IsDeleted == false);
+            builder.Entity<ProductImage>().HasQueryFilter(x => x.IsDeleted == false);
+            builder.Entity<ProductInStatus>().HasQueryFilter(x => x.IsDeleted == false);
+
+
+
             SeedRoles(builder);
         }
         private static void SeedRoles(ModelBuilder builder)
@@ -39,10 +50,7 @@ namespace Chat.Data.Data
                 );
             builder.Entity<ProductStatus>().HasData(
                 new ProductStatus() { ProductStatusId = 1, ProductStatusName = "Waiting to accept" },
-                new ProductStatus() { ProductStatusId = 2, ProductStatusName = "Your product has been registered successfully" },
-                new ProductStatus() { ProductStatusId = 3, ProductStatusName = "Auction in Progress" },
-                new ProductStatus() { ProductStatusId = 4, ProductStatusName = "Sold" },
-                new ProductStatus() { ProductStatusId = 5, ProductStatusName = "Expired" }
+                new ProductStatus() { ProductStatusId = 2, ProductStatusName = "Your product has been registered successfully" }
                 );
         }
     }

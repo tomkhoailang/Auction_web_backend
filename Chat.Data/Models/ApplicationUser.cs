@@ -8,7 +8,7 @@ namespace Chat.Data.Models
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiration { get; set; }
         public ICollection<Message>? Messages { get; set; }
-        public ICollection<ChatRoom>? JoinedChatRooms { get; set; }
+        public ICollection<ChatRoomUser>? JoinedChatRooms { get; set; }
         public ICollection<ChatRoom>? HostRooms { get; set; }
         public ICollection<Product>? SellingProducts { get; set; }
         public ICollection<Bidding>? Biddings { get; set; }

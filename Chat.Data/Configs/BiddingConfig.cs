@@ -15,6 +15,8 @@ namespace Chat.Data.Configs
             builder.HasOne(b => b.BiddingUser).WithMany(bu => bu.Biddings).HasForeignKey(b => b.BiddingUserId).IsRequired().OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(b => b.Product).WithMany(p => p.Biddings).HasForeignKey(p => p.ProductId).IsRequired().OnDelete(DeleteBehavior.NoAction);
 
+
+
         }
     }
 }

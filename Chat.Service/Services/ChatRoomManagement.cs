@@ -3,7 +3,6 @@ using Chat.Data.Models;
 using Chat.Service.Models;
 using Chat.Service.Models.ChatRoom;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace Chat.Service.Services
 {
@@ -44,18 +43,20 @@ namespace Chat.Service.Services
 
         public Task<ApiResponse<List<ChatRoom>>> GetUserChatRooms(ApplicationUser user)
         {
-            user.JoinedChatRooms ??= new List<ChatRoom>();
-            List<ChatRoom> chatRooms = user.JoinedChatRooms.ToList();
-            var filteredChatRooms = chatRooms.Select(room => new ChatRoom
-            {
-                ChatRoomId = room.ChatRoomId,
-                HostUserId = room.HostUserId,
-                StartDate = room.StartDate,
-                EndDate = room.EndDate,
-                Messages = room.Messages,
-                Users = room.Users!.Select(u => new ApplicationUser { UserName = u.UserName }).ToList()
-            }).ToList();
-            return Task.FromResult(new ApiResponse<List<ChatRoom>> { IsSuccess = false, Message = "Find chatroom succesfully", StatusCode = 200, Response = filteredChatRooms });
+            //user.JoinedChatRooms ??= new List<ChatRoom>();
+            //List<ChatRoom> chatRooms = user.JoinedChatRooms.ToList();
+            //var filteredChatRooms = chatRooms.Select(room => new ChatRoom
+            //{
+            //    ChatRoomId = room.ChatRoomId,
+            //    HostUserId = room.HostUserId,
+            //    StartDate = room.StartDate,
+            //    EndDate = room.EndDate,
+            //    Messages = room.Messages,
+            //    Users = room.Users!.Select(u => new ApplicationUser { UserName = u.UserName }).ToList()
+            //}).ToList();
+            //return Task.FromResult(new ApiResponse<List<ChatRoom>> { IsSuccess = false, Message = "Find chatroom succesfully", StatusCode = 200, Response = filteredChatRooms });
+            throw new NotImplementedException();
+
         }
 
         public async Task<ApiResponse<Message>> CreateMessageAsync(CreateMessageModel createMessageModel)
@@ -100,9 +101,13 @@ namespace Chat.Service.Services
                 var product = await _dbcontext.Products.Include(p => p.ProductInStatuses).FirstOrDefaultAsync(p => p.ProductId == id);
                 product.ProductInStatuses.Add(new ProductInStatus { ProductStatusId = 1 });
             }
-            var chatRoomProduct = chatRoom.ChatRoomProducts;
-            _dbcontext.ChatRoomProducts.RemoveRange(chatRoomProduct);
-            chatRoom.Users = null;
+            _dbcontext.ChangeTracker.TrackGraph(chatRoom, entity =>
+            {
+                if (entity.Entry.State == EntityState.Unchanged)
+                {
+                    entity.Entry.State = EntityState.Deleted;
+                }
+            });
             _dbcontext.ChatRooms.Remove(chatRoom);
             var rs = await _dbcontext.SaveChangesAsync();
             if (rs > 0)
@@ -138,7 +143,7 @@ namespace Chat.Service.Services
             chatRoom.Users = null;
             chatRoom.StartDate = createChatRoomModel.StartDate;
             chatRoom.EndDate = createChatRoomModel.StartDate.AddMinutes(5);
-            
+
             var rs = await _dbcontext.SaveChangesAsync();
             if (rs > 0)
             {
@@ -149,19 +154,21 @@ namespace Chat.Service.Services
 
         public async Task<ApiResponse<ChatRoom>> JoinChatRoom(int ChatRoomId, string UserId)
         {
-            var chatRoom = await _dbcontext.ChatRooms.Include(c => c.Users).FirstOrDefaultAsync(c => c.ChatRoomId ==  ChatRoomId);
-            var user = await _dbcontext.ApplicationUsers.Include(c => c.JoinedChatRooms).FirstOrDefaultAsync(c => c.Id == UserId);
+            //var chatRoom = await _dbcontext.ChatRooms.Include(c => c.Users).FirstOrDefaultAsync(c => c.ChatRoomId == ChatRoomId);
+            //var user = await _dbcontext.ApplicationUsers.Include(c => c.JoinedChatRooms).FirstOrDefaultAsync(c => c.Id == UserId);
 
-            if (!chatRoom.Users.Contains(user))
-            {
-                chatRoom.Users.Add(user);
-            }
-            var rs = await _dbcontext.SaveChangesAsync();
-            if (rs > 0)
-            {
-                return new ApiResponse<ChatRoom> { IsSuccess = true, Message = "Join chat room sucessully", StatusCode = 201, Response = chatRoom };
-            }
-            return new ApiResponse<ChatRoom> { IsSuccess = false, Message = "Join chat room failed", StatusCode = 400 };
+            //if (!chatRoom.Users.Contains(user))
+            //{
+            //    chatRoom.Users.Add(user);
+            //}
+            //var rs = await _dbcontext.SaveChangesAsync();
+            //if (rs > 0)
+            //{
+            //    return new ApiResponse<ChatRoom> { IsSuccess = true, Message = "Join chat room sucessully", StatusCode = 201, Response = chatRoom };
+            //}
+            //return new ApiResponse<ChatRoom> { IsSuccess = false, Message = "Join chat room failed", StatusCode = 400 };
+            throw new NotImplementedException();
+
         }
     }
 }

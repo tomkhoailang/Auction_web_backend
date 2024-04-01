@@ -1,4 +1,5 @@
 using Chat.Data.Data;
+using Chat.Data.Interceptors;
 using Chat.Data.Models;
 using Chat.Service.Models;
 using Chat.Service.Services;
@@ -14,7 +15,12 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration!;
-builder.Services.AddDbContext<ApplicationDbContext>(opts => opts.UseSqlServer(configuration.GetConnectionString("ConnStr")));
+builder.Services.AddDbContext<ApplicationDbContext>(opts =>
+{
+    opts.UseSqlServer(configuration.GetConnectionString("ConnStr"));
+    opts.AddInterceptors(new SoftDeleteInterceptor());
+});
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
 }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();

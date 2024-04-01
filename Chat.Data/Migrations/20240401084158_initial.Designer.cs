@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chat.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240315002429_updatecascadeonproductinstatusconfig")]
-    partial class updatecascadeonproductinstatusconfig
+    [Migration("20240401084158_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -114,6 +114,12 @@ namespace Chat.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -139,12 +145,18 @@ namespace Chat.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChatRoomId"));
 
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("HostUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -173,6 +185,12 @@ namespace Chat.Data.Migrations
                     b.Property<int>("ChatRoomId")
                         .HasColumnType("int");
 
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -183,6 +201,27 @@ namespace Chat.Data.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ChatRoomProducts");
+                });
+
+            modelBuilder.Entity("Chat.Data.Models.ChatRoomUser", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ChatRoomId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("UserId", "ChatRoomId");
+
+                    b.HasIndex("ChatRoomId");
+
+                    b.ToTable("ChatRoomUsers");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.Message", b =>
@@ -199,6 +238,12 @@ namespace Chat.Data.Migrations
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
@@ -224,12 +269,18 @@ namespace Chat.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("InitialPrice")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsSold")
                         .HasColumnType("bit");
@@ -260,9 +311,15 @@ namespace Chat.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductImageId"));
 
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -282,6 +339,12 @@ namespace Chat.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductInStatusID"));
 
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -299,7 +362,7 @@ namespace Chat.Data.Migrations
 
                     b.HasIndex("ProductStatusId");
 
-                    b.ToTable("ProductInStatus");
+                    b.ToTable("ProductInStatuses");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.ProductStatus", b =>
@@ -328,37 +391,7 @@ namespace Chat.Data.Migrations
                         {
                             ProductStatusId = 2,
                             ProductStatusName = "Your product has been registered successfully"
-                        },
-                        new
-                        {
-                            ProductStatusId = 3,
-                            ProductStatusName = "Auction in Progress"
-                        },
-                        new
-                        {
-                            ProductStatusId = 4,
-                            ProductStatusName = "Sold"
-                        },
-                        new
-                        {
-                            ProductStatusId = 5,
-                            ProductStatusName = "Expired"
                         });
-                });
-
-            modelBuilder.Entity("ChatRoomUser", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ChatRoomId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "ChatRoomId");
-
-                    b.HasIndex("ChatRoomId");
-
-                    b.ToTable("ChatRoomUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -390,14 +423,14 @@ namespace Chat.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "86ed554a-66e3-49c3-a024-1461eea1b465",
+                            Id = "f863172d-0218-4220-8ea2-68136cecfd40",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "58e3e1ef-075a-41d9-b97d-05ec422bd4ef",
+                            Id = "fcd2f5aa-cc46-4d5c-a250-9ee72ada769b",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -551,12 +584,31 @@ namespace Chat.Data.Migrations
                     b.HasOne("Chat.Data.Models.Product", "Product")
                         .WithMany("ChatRoomProducts")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ChatRoom");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Chat.Data.Models.ChatRoomUser", b =>
+                {
+                    b.HasOne("Chat.Data.Models.ChatRoom", "ChatRoom")
+                        .WithMany("Users")
+                        .HasForeignKey("ChatRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Chat.Data.Models.ApplicationUser", "User")
+                        .WithMany("JoinedChatRooms")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChatRoom");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.Message", b =>
@@ -619,21 +671,6 @@ namespace Chat.Data.Migrations
                     b.Navigation("ProductStatus");
                 });
 
-            modelBuilder.Entity("ChatRoomUser", b =>
-                {
-                    b.HasOne("Chat.Data.Models.ChatRoom", null)
-                        .WithMany()
-                        .HasForeignKey("ChatRoomId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Chat.Data.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -691,6 +728,8 @@ namespace Chat.Data.Migrations
 
                     b.Navigation("HostRooms");
 
+                    b.Navigation("JoinedChatRooms");
+
                     b.Navigation("Messages");
 
                     b.Navigation("SellingProducts");
@@ -701,6 +740,8 @@ namespace Chat.Data.Migrations
                     b.Navigation("ChatRoomProducts");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Chat.Data.Models.Product", b =>

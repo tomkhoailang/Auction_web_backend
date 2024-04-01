@@ -4,7 +4,6 @@ using Chat.Data.Models;
 using Chat.Service.Models;
 using Chat.Service.Models.Product;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Chat.Service.Services
 {
@@ -41,49 +40,50 @@ namespace Chat.Service.Services
 
         public async Task<ApiResponse<Product>> AssignToChatRoomAsync(List<Product> products, ChatRoom chatRoom)
         {
-            var message = "";
-            chatRoom.ChatRoomProducts ??= new List<ChatRoomProduct>();
-            chatRoom.Users ??= new List<ApplicationUser>();
-            var currentTime = chatRoom.EndDate;
-            foreach (var product in products)
-            {
-                var existedInUpcoming = from crp in _dbcontext.ChatRoomProducts
-                                        join cr in _dbcontext.ChatRooms
-                                        on crp.ChatRoomId equals cr.ChatRoomId
-                                        where crp.ProductId == product.ProductId
-                                        && cr.EndDate > DateTime.UtcNow
-                                        select crp;
-                if (!product.IsSold && !existedInUpcoming.Any())
-                {
-                    ChatRoomProduct chatRoomProduct = new ChatRoomProduct
-                    {
-                        ProductId = product.ProductId,
-                        BiddingStartTime = currentTime,
-                        BiddingEndTime = currentTime.AddMinutes(30),
-                    };
-                    chatRoom.ChatRoomProducts.Add(chatRoomProduct);
-                    product.ProductInStatuses?.Add(new ProductInStatus { ProductStatusId = 2 });
-                    currentTime = currentTime.AddMinutes(35);
-                    if (!chatRoom.Users.Any(u => u.Id == product.SellerId))
-                    {
-                        chatRoom.Users.Add(product.Seller);
-                    }
+            //var message = "";
+            //chatRoom.ChatRoomProducts ??= new List<ChatRoomProduct>();
+            //chatRoom.Users ??= new List<ApplicationUser>();
+            //var currentTime = chatRoom.EndDate;
+            //foreach (var product in products)
+            //{
+            //    var existedInUpcoming = from crp in _dbcontext.ChatRoomProducts
+            //                            join cr in _dbcontext.ChatRooms
+            //                            on crp.ChatRoomId equals cr.ChatRoomId
+            //                            where crp.ProductId == product.ProductId
+            //                            && cr.EndDate > DateTime.UtcNow
+            //                            select crp;
+            //    if (!product.IsSold && !existedInUpcoming.Any())
+            //    {
+            //        ChatRoomProduct chatRoomProduct = new ChatRoomProduct
+            //        {
+            //            ProductId = product.ProductId,
+            //            BiddingStartTime = currentTime,
+            //            BiddingEndTime = currentTime.AddMinutes(30),
+            //        };
+            //        chatRoom.ChatRoomProducts.Add(chatRoomProduct);
+            //        product.ProductInStatuses?.Add(new ProductInStatus { ProductStatusId = 2 });
+            //        currentTime = currentTime.AddMinutes(35);
+            //        if (!chatRoom.Users.Any(u => u.Id == product.SellerId))
+            //        {
+            //            chatRoom.Users.Add(product.Seller);
+            //        }
 
-                }
-                else
-                {
-                    message += " some product can not be added to this chat room duo to it's assigned to another one";
-                }
-            }
-            var totalTime = products.Count * 35;
-            chatRoom.EndDate = chatRoom.EndDate.AddMinutes(totalTime);
-            var rs = await _dbcontext.SaveChangesAsync();
-            if (rs > 0)
-            {
-                return new ApiResponse<Product> { IsSuccess = true, Message = "Assign product to chat room succesfully" + message, StatusCode = 201 };
-            }
+            //    }
+            //    else
+            //    {
+            //        message += " some product can not be added to this chat room duo to it's assigned to another one";
+            //    }
+            //}
+            //var totalTime = products.Count * 35;
+            //chatRoom.EndDate = chatRoom.EndDate.AddMinutes(totalTime);
+            //var rs = await _dbcontext.SaveChangesAsync();
+            //if (rs > 0)
+            //{
+            //    return new ApiResponse<Product> { IsSuccess = true, Message = "Assign product to chat room succesfully" + message, StatusCode = 201 };
+            //}
 
-            return new ApiResponse<Product> { IsSuccess = false, Message = "Assign product to chat room failed " + message, StatusCode = 400 };
+            //return new ApiResponse<Product> { IsSuccess = false, Message = "Assign product to chat room failed " + message, StatusCode = 400 };
+            throw new NotImplementedException();
         }
 
         public async Task<ApiResponse<Product>> CreateProductAsync(CreateProductModel createProductModel, string UserId)
@@ -245,7 +245,14 @@ namespace Chat.Service.Services
             //{
             //    _dbcontext.ProductImages.Remove(image);
             //}
-            product.ChatRoomProducts = null;
+            _dbcontext.ChangeTracker.TrackGraph(product, entity =>
+            {
+                if (entity.Entry.State == EntityState.Unchanged)
+                {
+                    entity.Entry.State = EntityState.Deleted;
+                }
+            });
+
             _dbcontext.Products.Remove(product);
             var rs = await _dbcontext.SaveChangesAsync();
             if (rs > 0)

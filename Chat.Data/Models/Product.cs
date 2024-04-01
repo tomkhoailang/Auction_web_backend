@@ -1,6 +1,8 @@
-﻿namespace Chat.Data.Models
+﻿using Chat.Data.Interfaces;
+
+namespace Chat.Data.Models
 {
-    public class Product
+    public class Product : ISoftDelete
     {
         public int ProductId { get; set; }
         public string Name { get; set; } = null!;
@@ -14,5 +16,7 @@
         public virtual ICollection<Bidding>? Biddings { get; set; }
         public virtual ICollection<ProductInStatus>? ProductInStatuses { get; set; }
         public virtual ICollection<ChatRoomProduct>? ChatRoomProducts { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
     }
 }
