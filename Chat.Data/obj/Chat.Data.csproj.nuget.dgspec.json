@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\code\\ASP.NET Core\\Signal R\\Auction_web_backend\\Chat.Data\\Chat.Data.csproj": {}
+    "C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web_backend\\Chat.Data\\Chat.Data.csproj": {}
   },
   "projects": {
-    "D:\\code\\ASP.NET Core\\Signal R\\Auction_web_backend\\Chat.Data\\Chat.Data.csproj": {
+    "C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web_backend\\Chat.Data\\Chat.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\code\\ASP.NET Core\\Signal R\\Auction_web_backend\\Chat.Data\\Chat.Data.csproj",
+        "projectUniqueName": "C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web_backend\\Chat.Data\\Chat.Data.csproj",
         "projectName": "Chat.Data",
-        "projectPath": "D:\\code\\ASP.NET Core\\Signal R\\Auction_web_backend\\Chat.Data\\Chat.Data.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\code\\ASP.NET Core\\Signal R\\Auction_web_backend\\Chat.Data\\obj\\",
+        "projectPath": "C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web_backend\\Chat.Data\\Chat.Data.csproj",
+        "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web_backend\\Chat.Data\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

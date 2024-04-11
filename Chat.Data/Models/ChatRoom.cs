@@ -8,6 +8,7 @@ namespace Chat.Data.Models
         public string HostUserId { get; set; } = null!;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public int CustomDuration {  get; set; }
         public virtual ApplicationUser HostUser { get; set; } = null!;
         public virtual ICollection<Message>? Messages { get; set; }
         public virtual ICollection<ChatRoomUser>? Users { get; set; }

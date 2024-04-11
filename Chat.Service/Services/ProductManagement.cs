@@ -40,49 +40,67 @@ namespace Chat.Service.Services
 
         public async Task<ApiResponse<Product>> AssignToChatRoomAsync(List<Product> products, ChatRoom chatRoom)
         {
-            //var message = "";
+            var message = "";
             //chatRoom.ChatRoomProducts ??= new List<ChatRoomProduct>();
-            //chatRoom.Users ??= new List<ApplicationUser>();
-            //var currentTime = chatRoom.EndDate;
-            //foreach (var product in products)
-            //{
-            //    var existedInUpcoming = from crp in _dbcontext.ChatRoomProducts
-            //                            join cr in _dbcontext.ChatRooms
-            //                            on crp.ChatRoomId equals cr.ChatRoomId
-            //                            where crp.ProductId == product.ProductId
-            //                            && cr.EndDate > DateTime.UtcNow
-            //                            select crp;
-            //    if (!product.IsSold && !existedInUpcoming.Any())
-            //    {
-            //        ChatRoomProduct chatRoomProduct = new ChatRoomProduct
-            //        {
-            //            ProductId = product.ProductId,
-            //            BiddingStartTime = currentTime,
-            //            BiddingEndTime = currentTime.AddMinutes(30),
-            //        };
-            //        chatRoom.ChatRoomProducts.Add(chatRoomProduct);
-            //        product.ProductInStatuses?.Add(new ProductInStatus { ProductStatusId = 2 });
-            //        currentTime = currentTime.AddMinutes(35);
-            //        if (!chatRoom.Users.Any(u => u.Id == product.SellerId))
-            //        {
-            //            chatRoom.Users.Add(product.Seller);
-            //        }
+            //chatRoom.Users ??= new List<ChatRoomUser>();
+            var productIds = products.Select(p => p.ProductId).ToList();
+            var chatRoomProducts = chatRoom.ChatRoomProducts;
+            foreach(var crp in chatRoomProducts)
+            {
+                if (!productIds.Contains(crp.ProductId))
+                {
+                    crp.IsDeleted = true;
+                    crp.DeletedAt = DateTime.Now;
+                    Product pr = await _dbcontext.Products.Include(p => p.ProductInStatuses).FirstOrDefaultAsync(p => p.ProductId == crp.ProductId);
+                    pr.ProductInStatuses.Add(new ProductInStatus { ProductStatusId = 1 });
+                }
+            }
+            var currentTime = chatRoom.EndDate;
+            foreach (var product in products)
+            {
+                var vdv = DateTime.Now;
+                var existedInUpcoming = from crp in _dbcontext.ChatRoomProducts
+                                        join cr in _dbcontext.ChatRooms
+                                        on crp.ChatRoomId equals cr.ChatRoomId
+                                        where crp.ProductId == product.ProductId
+                                        && cr.EndDate > DateTime.Now
+                                        && cr.IsDeleted == false
+                                        select crp;
+                if (!existedInUpcoming.Any())
+                {
+                    ChatRoomProduct chatRoomProduct = new ChatRoomProduct
+                    {
+                        ProductId = product.ProductId,
+                        BiddingStartTime = currentTime,
+                        BiddingEndTime = currentTime.AddMinutes(30),
+                    };
+                    chatRoom.ChatRoomProducts.Add(chatRoomProduct);
+                    product.ProductInStatuses?.Add(new ProductInStatus { ProductStatusId = 2 });
+                    currentTime = currentTime.AddMinutes(35);
+                    if (!chatRoom.Users.Any(u => u.UserId == product.SellerId))
+                    {
+                        chatRoom.Users.Add(new ChatRoomUser
+                        {
+                            UserId = product.SellerId,
+                            ChatRoomId = chatRoom.ChatRoomId
+                        });
+                    }
 
-            //    }
-            //    else
-            //    {
-            //        message += " some product can not be added to this chat room duo to it's assigned to another one";
-            //    }
-            //}
-            //var totalTime = products.Count * 35;
-            //chatRoom.EndDate = chatRoom.EndDate.AddMinutes(totalTime);
-            //var rs = await _dbcontext.SaveChangesAsync();
-            //if (rs > 0)
-            //{
-            //    return new ApiResponse<Product> { IsSuccess = true, Message = "Assign product to chat room succesfully" + message, StatusCode = 201 };
-            //}
+                }
+                else
+                {
+                    message += " some product can not be added to this chat room duo to it's assigned to another one";
+                }
+            }
+            var totalTime = products.Count * 35;
+            chatRoom.EndDate = chatRoom.EndDate.AddMinutes(totalTime);
+            var rs = await _dbcontext.SaveChangesAsync();
+            if (rs > 0)
+            {
+                return new ApiResponse<Product> { IsSuccess = true, Message = "Assign product to chat room succesfully" + message, StatusCode = 201 };
+            }
 
-            //return new ApiResponse<Product> { IsSuccess = false, Message = "Assign product to chat room failed " + message, StatusCode = 400 };
+            return new ApiResponse<Product> { IsSuccess = false, Message = "Assign product to chat room failed " + message, StatusCode = 400 };
             throw new NotImplementedException();
         }
 
@@ -94,12 +112,6 @@ namespace Chat.Service.Services
                 foreach (var file in createProductModel.Files)
                 {
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    //change this path to the one in assets/productImages in angular project
-                    //var path = Path.Combine("C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api/bidding_web\\Auction_web_backend\\Chat.Service\\Images\\ProductImages", fileName);
-
-                    //var path = Path.Combine("C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web\\src\\productImages", fileName);
-
-                    //var path = Path.Combine("D:\\code\\ASP.NET Core\\Signal R\\Auction_web_backend\\Chat.Service\\Images\\ProductImages\\", fileName);
                     var rDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
                     var imagePath = Path.Combine(rDirectory, "Chat.Service", "Images", "ProductImages", fileName);
 
@@ -190,14 +202,12 @@ namespace Chat.Service.Services
 
         public async Task<ApiResponse<List<Product>>> GetProductFromUserAsync(string UserId)
         {
-            //var products = await _dbcontext.Products.Include(p => p.Images).Include(p => p.ChatRoomProducts).Include(p => p.ProductInStatuses).Include(p => p.Biddings).Where(p => p.SellerId == UserId).ToListAsync();
-
             var products = await _dbcontext.Products
             .Include(p => p.Images)
             .Include(p => p.ChatRoomProducts)
             .Include(p => p.ProductInStatuses)
             .Include(p => p.Biddings)
-            .Where(p => p.SellerId == UserId)
+            .Where(p => p.SellerId == UserId && p.IsDeleted == false)
             .Select(p => new Product
             {
                 ProductId = p.ProductId,
@@ -205,7 +215,6 @@ namespace Chat.Service.Services
                 Description = p.Description,
                 InitialPrice = p.InitialPrice,
                 MinimumStep = p.MinimumStep,
-                IsSold = p.IsSold,
                 SellerId = p.SellerId,
                 Images = p.Images,
                 Biddings = p.Biddings,
@@ -240,11 +249,6 @@ namespace Chat.Service.Services
             {
                 return new ApiResponse<Message> { IsSuccess = false, Message = "Error", StatusCode = 404 };
             }
-            //var imagelist = await _dbcontext.ProductImages.Where(p => p.ProductId == ProductId).ToListAsync();
-            //foreach(var image in imagelist)
-            //{
-            //    _dbcontext.ProductImages.Remove(image);
-            //}
             _dbcontext.ChangeTracker.TrackGraph(product, entity =>
             {
                 if (entity.Entry.State == EntityState.Unchanged)
@@ -254,6 +258,10 @@ namespace Chat.Service.Services
             });
 
             _dbcontext.Products.Remove(product);
+
+            //product.IsDeleted = true;
+            //product.DeletedAt = DateTimeOffset.UtcNow;
+
             var rs = await _dbcontext.SaveChangesAsync();
             if (rs > 0)
             {
@@ -271,11 +279,7 @@ namespace Chat.Service.Services
                 foreach (var file in createProductModel.Files)
                 {
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    //change this path to the one in assets/productImages in angular project
-                    //var path = Path.Combine("C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api/bidding_web\\Auction_web_backend\\Chat.Service\\Images\\ProductImages", fileName);
-                    //var path = Path.Combine("C:\\Users\\ADMIN\\OneDrive\\Máy tính\\code\\source code\\api\\bidding_web\\Auction_web\\src\\productImages", fileName);
 
-                    //var path = Path.Combine("D:\\code\\ASP.NET Core\\Signal R\\Auction_web_backend\\Chat.Service\\Images\\ProductImages\\", fileName);
                     var rDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
                     var imagePath = Path.Combine(rDirectory, "Chat.Service", "Images", "ProductImages", fileName);
 
@@ -328,20 +332,31 @@ namespace Chat.Service.Services
 
         public async Task<ApiResponse<List<Product>>> GetProductsWithStatus(int statusId)
         {
-            var products = await _dbcontext.Products.Include(p => p.Images).Include(p => p.ChatRoomProducts).ThenInclude(crp => crp.ChatRoom).Include(p => p.ProductInStatuses).ThenInclude(p => p.ProductStatus).ToListAsync();
-
             var productsWithLatestStatus = await _dbcontext.Products
                 .Select(p => new
                 {
-                    Product = p,
+                    Product = new Product
+                    {
+                        ProductId = p.ProductId,
+                        Name = p.Name,
+                        Description = p.Description,
+                        InitialPrice = p.InitialPrice,
+                        MinimumStep = p.MinimumStep,
+                        SellerId = p.SellerId,
+                        Images = p.Images,
+                        Biddings = p.Biddings,
+                        IsDeleted = p.IsDeleted,
+                        ProductInStatuses = p.ProductInStatuses,
+                        ChatRoomProducts = p.ChatRoomProducts
+                    },
                     LatestProductStatus = p.ProductInStatuses.OrderByDescending(ps => ps.Timestamp)
                                                             .FirstOrDefault()
                 })
-                .Where(x => x.LatestProductStatus != null && x.LatestProductStatus.ProductStatusId == statusId)
+                .Where(x => x.LatestProductStatus != null && x.LatestProductStatus.ProductStatusId == statusId && x.Product.IsDeleted == false)
                 .Select(x => x.Product)
                 .ToListAsync();
-            var a = products[0];
-            if (products == null)
+            var a = productsWithLatestStatus[0];
+            if (productsWithLatestStatus == null)
             {
                 return new ApiResponse<List<Product>> { IsSuccess = false, Message = "No product with that user id", StatusCode = 404 };
             }
@@ -367,5 +382,20 @@ namespace Chat.Service.Services
             return new ApiResponse<List<string>> { IsSuccess = true, Message = "Find images by productid successfully", Response = imgNames, StatusCode = 200 };
         }
 
+        public async Task<ApiResponse<List<Product>>> GetBiddingProductsFromUser(string UserId)
+        {
+
+            var productsHadBidding = await _dbcontext.Products.Include(p => p.Images).Include(p => p.ChatRoomProducts).Include(p => p.Biddings)
+                .Where(p => p.Biddings.Any(b => b.BiddingUserId == UserId) &&
+                            p.SellerId != UserId &&
+                            !p.IsDeleted)
+                .ToListAsync();
+            var a = productsHadBidding[0];
+            if (productsHadBidding == null)
+            {
+                return new ApiResponse<List<Product>> { IsSuccess = false, Message = "No product with that user id", StatusCode = 404 };
+            }
+            return new ApiResponse<List<Product>> { IsSuccess = true, Message = "Find product by user id successfully", Response = productsHadBidding, StatusCode = 200 };
+        }
     }
 }

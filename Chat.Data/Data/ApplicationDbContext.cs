@@ -19,6 +19,8 @@ namespace Chat.Data.Data
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ChatRoomUser> ChatRoomUsers { get; set; }
+        public DbSet<BiddingFare> BiddingFares { get; set; }
+
 
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -51,6 +53,14 @@ namespace Chat.Data.Data
             builder.Entity<ProductStatus>().HasData(
                 new ProductStatus() { ProductStatusId = 1, ProductStatusName = "Waiting to accept" },
                 new ProductStatus() { ProductStatusId = 2, ProductStatusName = "Your product has been registered successfully" }
+                );
+
+            builder.Entity<BiddingFare>().HasData(
+                new BiddingFare() { BiddingFareId = 1, BiddingRange = 20000000, BiddingCost = 4  },
+                new BiddingFare() { BiddingFareId = 2, BiddingRange = 50000000, BiddingCost = 6 },
+                new BiddingFare() { BiddingFareId = 3, BiddingRange = 100000000, BiddingCost = 9},
+                new BiddingFare() { BiddingFareId = 4, BiddingRange = 100000000000, BiddingCost =  11}
+
                 );
         }
     }

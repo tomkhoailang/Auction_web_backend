@@ -9,7 +9,6 @@ namespace Chat.Data.Models
         public string Description { get; set; } = null!;
         public decimal InitialPrice { get; set; }
         public decimal MinimumStep { get; set; }
-        public bool IsSold { get; set; }
         public string SellerId { get; set; } = null!;
         public virtual ApplicationUser Seller { get; set; } = null!;
         public virtual ICollection<ProductImage>? Images { get; set; }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +8,7 @@
 namespace Chat.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +53,20 @@ namespace Chat.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BiddingFares",
+                columns: table => new
+                {
+                    BiddingFareId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BiddingCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    BiddingRange = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BiddingFares", x => x.BiddingFareId);
                 });
 
             migrationBuilder.CreateTable(
@@ -182,6 +197,7 @@ namespace Chat.Data.Migrations
                     HostUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CustomDuration = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -205,7 +221,6 @@ namespace Chat.Data.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     InitialPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MinimumStep = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    IsSold = table.Column<bool>(type: "bit", nullable: false),
                     SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
@@ -271,7 +286,8 @@ namespace Chat.Data.Migrations
                         name: "FK_Messages_ChatRooms_ChatRoomId",
                         column: x => x.ChatRoomId,
                         principalTable: "ChatRooms",
-                        principalColumn: "ChatRoomId");
+                        principalColumn: "ChatRoomId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -322,7 +338,8 @@ namespace Chat.Data.Migrations
                         name: "FK_ChatRoomProducts_ChatRooms_ChatRoomId",
                         column: x => x.ChatRoomId,
                         principalTable: "ChatRooms",
-                        principalColumn: "ChatRoomId");
+                        principalColumn: "ChatRoomId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ChatRoomProducts_Products_ProductId",
                         column: x => x.ProductId,
@@ -386,8 +403,19 @@ namespace Chat.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "f863172d-0218-4220-8ea2-68136cecfd40", "1", "Admin", "Admin" },
-                    { "fcd2f5aa-cc46-4d5c-a250-9ee72ada769b", "2", "User", "User" }
+                    { "2d5cdf40-efec-4aa7-a438-5acbe3ad09bc", "1", "Admin", "Admin" },
+                    { "558f5d40-b5af-4571-b0e1-79703aabd7ed", "2", "User", "User" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "BiddingFares",
+                columns: new[] { "BiddingFareId", "BiddingCost", "BiddingRange" },
+                values: new object[,]
+                {
+                    { 1, 4m, 20000000m },
+                    { 2, 6m, 50000000m },
+                    { 3, 9m, 100000000m },
+                    { 4, 11m, 100000000000m }
                 });
 
             migrationBuilder.InsertData(
@@ -516,6 +544,9 @@ namespace Chat.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "BiddingFares");
 
             migrationBuilder.DropTable(
                 name: "Biddings");

@@ -24,9 +24,7 @@ namespace ChatApiDemo4.Controllers
             var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
             return StatusCode(userInfoRes.StatusCode, new { userInfoRes.Response });
         }
-
-
-        
+      
 
     }
 }
