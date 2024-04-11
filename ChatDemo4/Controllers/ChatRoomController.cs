@@ -87,6 +87,7 @@ namespace ChatApiDemo4.Controllers
             var apiRs = await _chatRoomManager.CreateChatRoomAsync(createChatRoomModel);
             return StatusCode(apiRs.StatusCode, new { apiRs.Response });
         }
+
         [Authorize(Roles = "Admin")]
         [HttpPost("{chatroomId}/products")]
         public async Task<IActionResult> AssingProductToChatRoom([FromBody] AssingToChatRoomModel assingToChatRoomModel)

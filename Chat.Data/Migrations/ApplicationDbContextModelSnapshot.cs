@@ -134,6 +134,51 @@ namespace Chat.Data.Migrations
                     b.ToTable("Biddings");
                 });
 
+            modelBuilder.Entity("Chat.Data.Models.BiddingFare", b =>
+                {
+                    b.Property<int>("BiddingFareId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BiddingFareId"));
+
+                    b.Property<decimal>("BiddingCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BiddingRange")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("BiddingFareId");
+
+                    b.ToTable("BiddingFares");
+
+                    b.HasData(
+                        new
+                        {
+                            BiddingFareId = 1,
+                            BiddingCost = 4m,
+                            BiddingRange = 20000000m
+                        },
+                        new
+                        {
+                            BiddingFareId = 2,
+                            BiddingCost = 6m,
+                            BiddingRange = 50000000m
+                        },
+                        new
+                        {
+                            BiddingFareId = 3,
+                            BiddingCost = 9m,
+                            BiddingRange = 100000000m
+                        },
+                        new
+                        {
+                            BiddingFareId = 4,
+                            BiddingCost = 11m,
+                            BiddingRange = 100000000000m
+                        });
+                });
+
             modelBuilder.Entity("Chat.Data.Models.ChatRoom", b =>
                 {
                     b.Property<int>("ChatRoomId")
@@ -141,6 +186,9 @@ namespace Chat.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChatRoomId"));
+
+                    b.Property<int>("CustomDuration")
+                        .HasColumnType("int");
 
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("datetimeoffset");
@@ -277,9 +325,6 @@ namespace Chat.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSold")
                         .HasColumnType("bit");
 
                     b.Property<decimal>("MinimumStep")
@@ -420,14 +465,14 @@ namespace Chat.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f863172d-0218-4220-8ea2-68136cecfd40",
+                            Id = "2d5cdf40-efec-4aa7-a438-5acbe3ad09bc",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "fcd2f5aa-cc46-4d5c-a250-9ee72ada769b",
+                            Id = "558f5d40-b5af-4571-b0e1-79703aabd7ed",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -575,7 +620,7 @@ namespace Chat.Data.Migrations
                     b.HasOne("Chat.Data.Models.ChatRoom", "ChatRoom")
                         .WithMany("ChatRoomProducts")
                         .HasForeignKey("ChatRoomId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Chat.Data.Models.Product", "Product")
@@ -613,7 +658,7 @@ namespace Chat.Data.Migrations
                     b.HasOne("Chat.Data.Models.ChatRoom", "ChatRoom")
                         .WithMany("Messages")
                         .HasForeignKey("ChatRoomId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Chat.Data.Models.ApplicationUser", "Sender")

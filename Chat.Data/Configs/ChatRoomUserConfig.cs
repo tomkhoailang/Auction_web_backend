@@ -10,7 +10,7 @@ namespace Chat.Data.Configs
         {
             builder.HasKey(p => new { p.UserId, p.ChatRoomId });
             builder.HasOne(p => p.User).WithMany(u => u.JoinedChatRooms).HasForeignKey(u => u.UserId);
-            builder.HasOne(p => p.ChatRoom).WithMany(cr => cr.Users).HasForeignKey(u => u.ChatRoomId);
+            builder.HasOne(p => p.ChatRoom).WithMany(cr => cr.Users).HasForeignKey(u => u.ChatRoomId).OnDelete(DeleteBehavior.Cascade);
 
         }
     }

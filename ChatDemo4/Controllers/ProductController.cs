@@ -190,5 +190,17 @@ namespace ChatApiDemo4.Controllers
             return StatusCode(listProduct.StatusCode, new { listProduct.Response });
         }
 
+        [HttpGet("history")]
+        public async Task<IActionResult> getHistoryBidding()
+        {
+            var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
+
+            var listProduct = await _productManager.GetBiddingProductsFromUser(userInfoRes.Response!.Id);
+            if (!listProduct.IsSuccess)
+            {
+                return StatusCode(listProduct.StatusCode, new { listProduct.Message });
+            }
+            return StatusCode(listProduct.StatusCode, new { listProduct.Response });
+        }
     }
 }

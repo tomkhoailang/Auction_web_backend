@@ -11,7 +11,7 @@ namespace Chat.Data.Configs
             builder.HasKey(m => m.MessageId);
             builder.Property(m => m.MessageId).ValueGeneratedOnAdd();
             builder.HasOne(m => m.Sender).WithMany(s => s.Messages).HasForeignKey(s => s.SenderId).OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(m => m.ChatRoom).WithMany(cr => cr.Messages).HasForeignKey(cr => cr.ChatRoomId).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(m => m.ChatRoom).WithMany(cr => cr.Messages).HasForeignKey(cr => cr.ChatRoomId).OnDelete(DeleteBehavior.Cascade);
 
         }
     }
