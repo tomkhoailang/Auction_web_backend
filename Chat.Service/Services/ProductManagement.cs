@@ -38,45 +38,59 @@ namespace Chat.Service.Services
             return new ApiResponse<List<Product>> { IsSuccess = true, Message = "product is found", StatusCode = 200, Response = products };
         }
 
-        public async Task<ApiResponse<Product>> AssignToChatRoomAsync(List<Product> products, ChatRoom chatRoom)
+        public async Task<ApiResponse<Product>> AssignToChatRoomAsync(List<Product> products, ChatRoom chatRoom, int duration)
         {
             var message = "";
             //chatRoom.ChatRoomProducts ??= new List<ChatRoomProduct>();
             //chatRoom.Users ??= new List<ChatRoomUser>();
             var productIds = products.Select(p => p.ProductId).ToList();
             var chatRoomProducts = chatRoom.ChatRoomProducts;
-            foreach(var crp in chatRoomProducts)
+            foreach (var crp in chatRoomProducts)
             {
-                if (!productIds.Contains(crp.ProductId))
+                //if (!productIds.Contains(crp.ProductId))
+                //{
+                //crp.IsDeleted = true;
+                //crp.DeletedAt = DateTime.Now;
+                //Product pr = await _dbcontext.Products.Include(p => p.ProductInStatuses).FirstOrDefaultAsync(p => p.ProductId == crp.ProductId);
+                //pr.ProductInStatuses.Add(new ProductInStatus { ProductStatusId = 1 });
+                //}
+                _dbcontext.ChangeTracker.TrackGraph(crp, entity =>
                 {
-                    crp.IsDeleted = true;
-                    crp.DeletedAt = DateTime.Now;
-                    Product pr = await _dbcontext.Products.Include(p => p.ProductInStatuses).FirstOrDefaultAsync(p => p.ProductId == crp.ProductId);
-                    pr.ProductInStatuses.Add(new ProductInStatus { ProductStatusId = 1 });
-                }
+                    if (entity.Entry.State == EntityState.Unchanged)
+                    {
+                        entity.Entry.State = EntityState.Deleted;
+                    }
+                });
+                _dbcontext.ChatRoomProducts.Remove(crp);
             }
+            if (chatRoomProducts != null)
+            {
+                
+               
+            }
+            
             var currentTime = chatRoom.EndDate;
             foreach (var product in products)
             {
                 var vdv = DateTime.Now;
-                var existedInUpcoming = from crp in _dbcontext.ChatRoomProducts
-                                        join cr in _dbcontext.ChatRooms
-                                        on crp.ChatRoomId equals cr.ChatRoomId
-                                        where crp.ProductId == product.ProductId
-                                        && cr.EndDate > DateTime.Now
-                                        && cr.IsDeleted == false
-                                        select crp;
-                if (!existedInUpcoming.Any())
-                {
+                //var existedInUpcoming = from crp in _dbcontext.ChatRoomProducts
+                //                        join cr in _dbcontext.ChatRooms
+                //                        on crp.ChatRoomId equals cr.ChatRoomId
+                //                        where crp.ProductId == product.ProductId
+                //                        && cr.EndDate > DateTime.Now
+                //                        && cr.IsDeleted == false
+                //                        select crp;
+                //if (!existedInUpcoming.Any())
+                //{
                     ChatRoomProduct chatRoomProduct = new ChatRoomProduct
                     {
                         ProductId = product.ProductId,
                         BiddingStartTime = currentTime,
-                        BiddingEndTime = currentTime.AddMinutes(30),
+                        BiddingEndTime = currentTime.AddMinutes(duration),
                     };
                     chatRoom.ChatRoomProducts.Add(chatRoomProduct);
                     product.ProductInStatuses?.Add(new ProductInStatus { ProductStatusId = 2 });
-                    currentTime = currentTime.AddMinutes(35);
+                    currentTime = currentTime.AddMinutes(duration + 5);
                     if (!chatRoom.Users.Any(u => u.UserId == product.SellerId))
                     {
                         chatRoom.Users.Add(new ChatRoomUser
@@ -86,14 +100,15 @@ namespace Chat.Service.Services
                         });
                     }
 
-                }
-                else
-                {
-                    message += " some product can not be added to this chat room duo to it's assigned to another one";
-                }
+                //}
+                //else
+                //{
+                //    message += " some product can not be added to this chat room duo to it's assigned to another one";
+                //}
             }
-            var totalTime = products.Count * 35;
+            var totalTime = products.Count * (duration + 5);
             chatRoom.EndDate = chatRoom.EndDate.AddMinutes(totalTime);
+            chatRoom.CustomDuration = duration;
             var rs = await _dbcontext.SaveChangesAsync();
             if (rs > 0)
             {
@@ -232,14 +247,14 @@ namespace Chat.Service.Services
 
         }
 
-        public async Task<ApiResponse<List<ProductStatus>>> GetListProductStatus()
+        public async Task<ApiResponse<List<BiddingFare>>> GetListBiddingFares()
         {
-            var statuses = await _dbcontext.ProductStatuses.ToListAsync();
+            var statuses = await _dbcontext.BiddingFares.ToListAsync();
             if (statuses == null)
             {
-                return new ApiResponse<List<ProductStatus>> { IsSuccess = false, Message = "No product with that user id", StatusCode = 404 };
+                return new ApiResponse<List<BiddingFare>> { IsSuccess = false, Message = "No bidding fares", StatusCode = 404 };
             }
-            return new ApiResponse<List<ProductStatus>> { IsSuccess = true, Message = "Get productstatus list successfully", Response = statuses, StatusCode = 200 };
+            return new ApiResponse<List<BiddingFare>> { IsSuccess = true, Message = "Get bidding fares list successfully", Response = statuses, StatusCode = 200 };
         }
 
         public async Task<ApiResponse<Message>> DeleteProductAsync(int ProductId)

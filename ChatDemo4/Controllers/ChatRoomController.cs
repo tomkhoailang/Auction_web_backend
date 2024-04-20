@@ -102,7 +102,7 @@ namespace ChatApiDemo4.Controllers
             {
                 return StatusCode(getProductsRs.StatusCode, new { getProductsRs.Message });
             }
-            var assignRs = await _productManager.AssignToChatRoomAsync(getProductsRs.Response!, getChatRoomRs.Response!);
+            var assignRs = await _productManager.AssignToChatRoomAsync(getProductsRs.Response!, getChatRoomRs.Response!, assingToChatRoomModel.Duration);
 
             return StatusCode(assignRs.StatusCode, new { assignRs.Message });
         }

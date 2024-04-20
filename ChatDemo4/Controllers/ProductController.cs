@@ -61,18 +61,16 @@ namespace ChatApiDemo4.Controllers
             return StatusCode(createBidding.StatusCode, new { createBidding.Message });
         }
 
-        [Authorize]
-        [HttpGet("statuses")]
-        public async Task<IActionResult> GetStatusList()
+        //[Authorize]
+        [HttpGet("biddingfares")]
+        public async Task<IActionResult> GetBiddingFares()
         {
-            var userInfoRes = await _userManager.GetUserInfoAsync(HttpContext);
-
-            var listStatus = await _productManager.GetListProductStatus();
-            if (!listStatus.IsSuccess)
+            var fares = await _productManager.GetListBiddingFares();
+            if (!fares.IsSuccess)
             {
-                return StatusCode(listStatus.StatusCode, new { listStatus.Message });
+                return StatusCode(fares.StatusCode, new { fares.Message });
             }
-            return StatusCode(listStatus.StatusCode, new { listStatus.Response });
+            return StatusCode(fares.StatusCode, new { fares.Response });
         }
 
         [Authorize]
