@@ -38,7 +38,7 @@ delete from ProductInStatus where ProductStatusId = 2
 insert into ProductInStatuses ( Timestamp,ProductId, ProductStatusId, IsDeleted, DeletedAt) values(CURRENT_TIMESTAMP, 2,1, 0, null)
 insert into ProductInStatuses ( Timestamp,ProductId, ProductStatusId, IsDeleted, DeletedAt) values(CURRENT_TIMESTAMP, 3,1, 0, null)
 
-
+select * from BiddingFares
 
 select * from Biddings
 select * from ChatRooms

@@ -30,7 +30,7 @@ namespace Chat.Service.Services
             {
                 HostUserId = createChatRoomModel.HostUserId,
                 StartDate = createChatRoomModel.StartDate,
-                EndDate = createChatRoomModel.StartDate.AddMinutes(5),
+                EndDate = createChatRoomModel.StartDate.AddMinutes(5)
             };
             await _dbcontext.ChatRooms.AddAsync(chatRoom);
             var rs = await _dbcontext.SaveChangesAsync();
